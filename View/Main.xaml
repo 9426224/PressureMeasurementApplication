@@ -1,0 +1,35 @@
+﻿<Window x:Class="PressureMeasurementApplication.View.Main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PressureMeasurementApplication.View" xmlns:local1="clr-namespace:PressureMeasurementApplication.ViewModel.SerialPort"
+        mc:Ignorable="d"
+        Title="Main" Height="500" Width="800">
+
+    <Window.DataContext>
+        <local1:SerialPortViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <GroupBox Header="串口通信设置" Margin="549,10,10,328"/>
+
+        <Label Content="串口号" HorizontalAlignment="Left" Margin="553,27,0,0" VerticalAlignment="Top"/>
+        <ComboBox Name="portNameComboBox" 
+                  HorizontalAlignment="Left" 
+                  Margin="600,28,0,0" 
+                  VerticalAlignment="Top" 
+                  Width="80" 
+                  Height="22" 
+                  ItemsSource="{Binding PortNameList}" 
+                  SelectedIndex="0" 
+                  SelectedValuePath="Value"
+                  DisplayMemberPath="Value"
+                  SelectedValue="{Binding PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  />
+
+
+        <Button Content="启动数据捕获" HorizontalAlignment="Left" Margin="600,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.553" Width="80"/>
+
+    </Grid>
+</Window>
