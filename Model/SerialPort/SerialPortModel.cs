@@ -5,13 +5,13 @@ using System.IO.Ports;
 
 namespace PressureMeasurementApplication.Model.SerialPort
 {
-    public class SerialPortModel : ModelBase
+    public class SerialPortModel : ModelBase<SerialPortModel>
     {
         private System.IO.Ports.SerialPort serialPort;
 
-        public SerialPortModel(string com)
+        public SerialPortModel()
         {
-            this.serialPort = new System.IO.Ports.SerialPort(com);
+            this.serialPort = new System.IO.Ports.SerialPort();
         }
 
         //端口号
