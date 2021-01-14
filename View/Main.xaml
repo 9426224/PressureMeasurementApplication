@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PressureMeasurementApplication.View" xmlns:local1="clr-namespace:PressureMeasurementApplication.ViewModel.SerialPort"
         mc:Ignorable="d"
-        Title="Main" Height="500" Width="800" MaxHeight="500" MinHeight="500" MaxWidth="800" MinWidth="800" ResizeMode="NoResize">
+        Title="Main" Height="720" Width="1280" MaxHeight="720" MinHeight="720" MaxWidth="1280" MinWidth="1280" ResizeMode="NoResize">
 
     <Window.DataContext>
         <local1:SerialPortViewModel/>
     </Window.DataContext>
 
     <Grid>
-        <GroupBox Header="串口通信设置" Margin="549,10,10,309"/>
+        <GroupBox Header="串口通信设置" Margin="549,10,10,290"/>
 
         <Label Content="串口号" HorizontalAlignment="Left" Margin="553,30,0,0" VerticalAlignment="Top"/>
         <ComboBox Name="portNameComboBox" 
@@ -23,11 +23,11 @@
                   Height="22" 
                   ItemsSource="{Binding PortNameList}" 
                   SelectedIndex="0" 
-                  SelectedValuePath="DeviceID"
-                  DisplayMemberPath="DeviceInfo"
+                  SelectedValuePath="Value"
+                  DisplayMemberPath="Key"
                   SelectedValue="{Binding PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   />
-        <GroupBox Header="开关" Margin="550,180,10,228"/>
+        <GroupBox Header="开关" Margin="550,190,10,228"/>
         <Label Content="波特率" HorizontalAlignment="Left" Margin="553,60,0,0" VerticalAlignment="Top"/>
         <ComboBox Name="baudRateComboBox" 
                   HorizontalAlignment="Left" 
@@ -37,16 +37,13 @@
                   Height="22" 
                   ItemsSource="{Binding BaudRatesList}"
                   SelectedIndex="0" 
-                  SelectedValuePath="BaudRateValue"
-                  DisplayMemberPath="BaudRateName"
+                  SelectedValuePath="Value"
+                  DisplayMemberPath="Key"
                   SelectedValue="{Binding BaudRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   />
 
         <Button Content="开启通信" HorizontalAlignment="Left" Margin="570,212,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
         <Button Content="关闭通信" HorizontalAlignment="Left" Margin="680,212,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
-        <Button Margin="738,34,40,428" ToolTip="Refresh COM* ports"  RenderTransformOrigin="0.568,0.524" Width="22" Height="22">
-            <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" Stretch="Uniform" />
-        </Button>
 
         <Label Content="校验位" HorizontalAlignment="Left" Margin="553,90,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="ParityComboBox" 
@@ -57,9 +54,35 @@
             Height="22" 
             ItemsSource="{Binding ParitiesList}"
             SelectedIndex="0" 
-            SelectedValuePath="ParityValue"
-            DisplayMemberPath="ParityName"
+            SelectedValuePath="Value"
+            DisplayMemberPath="Key"
             SelectedValue="{Binding Parity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            />
+        <Label Content="数据位" HorizontalAlignment="Left" Margin="553,120,0,0" VerticalAlignment="Top"/>
+        <Label Content="停止位" HorizontalAlignment="Left" Margin="553,150,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="DataBitsComboBox" 
+            HorizontalAlignment="Left" 
+            Margin="600,123,0,0" 
+            VerticalAlignment="Top" 
+            Width="120" 
+            Height="22" 
+            ItemsSource="{Binding DataBitsList}"
+            SelectedIndex="0" 
+            SelectedValuePath="Value"
+            DisplayMemberPath="Key"
+            SelectedValue="{Binding DataBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            />
+        <ComboBox x:Name="StopBitsComboBox" 
+            HorizontalAlignment="Left" 
+            Margin="600,153,0,0" 
+            VerticalAlignment="Top" 
+            Width="120" 
+            Height="22" 
+            ItemsSource="{Binding StopBitsList}"
+            SelectedIndex="0" 
+            SelectedValuePath="Value"
+            DisplayMemberPath="Key"
+            SelectedValue="{Binding StopBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             />
 
     </Grid>

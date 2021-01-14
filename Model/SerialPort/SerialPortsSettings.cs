@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Linq;
 using System.Management;
 using System.IO.Ports;
 
@@ -10,82 +11,53 @@ namespace PressureMeasurementApplication.Model.SerialPort
     [Serializable]
     public class SerialPortsSettings : ModelBase<SerialPortsSettings>
     {
-        //设备ID
-        public string DeviceID { get; set; }
-        //设备描述
-        public string Description { get; set; }
-        //设备信息
-        public string DeviceInfo { get; set; }
-        //波特率名字
-        public string BaudRateName { get; set; }
-        //波特率值        
-        public int BaudRateValue { get; set; }
-        //校验名
-        public string ParityName { get; set; }
-        //校验值
-        public Parity ParityValue { get; set; }
-
-        //获取本机所有COM设备的详细信息
-        public List<SerialPortsSettings> GetPorts()
+        //获取本机所有COM端口设备
+        public Dictionary<string, string> GetPorts()
         {
-            var devicesLists = new List<SerialPortsSettings>();
+            using var searcher = new ManagementObjectSearcher(@"Select * From Win32_SerialPort");
 
-            ManagementObjectCollection moc;
-            using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_SerialPort"))
-            {
-                moc = searcher.Get();
-            }
+            using var moc = searcher.Get();
 
-            foreach (var device in moc)
-            {
-                devicesLists.Add(new SerialPortsSettings()
-                {
-                    DeviceID = (string)device.GetPropertyValue("DeviceID"),
-                    Description = (string)device.GetPropertyValue("Description"),
-                    DeviceInfo = (string)device.GetPropertyValue("Description") + " (" + (string)device.GetPropertyValue("DeviceID") + ")"
-                });
-            }
-
-            moc.Dispose();
-
-            return devicesLists;
+            return moc.OfType<ManagementBaseObject>().ToDictionary(
+                x => x.GetPropertyValue("Description") + "(" + x.GetPropertyValue("DeviceID") + ")",
+                x => x.GetPropertyValue("DeviceID").ToString());
         }
 
         //获取所有可设置的波特率
-        public List<SerialPortsSettings> GetBaudRates()
+        public Dictionary<string, int> GetBaudRates()
         {
-            var baudRates = new List<SerialPortsSettings>();
-
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "300 Baud", BaudRateValue = 300 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "600 Baud", BaudRateValue = 600 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "1200 Baud", BaudRateValue = 1200 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "2400 Baud", BaudRateValue = 2400 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "4800 Baud", BaudRateValue = 4800 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "9600 Baud", BaudRateValue = 9600 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "19200 Baud", BaudRateValue = 19200 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "38400 Baud", BaudRateValue = 38400 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "57600 Baud", BaudRateValue = 57600 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "115200 Baud", BaudRateValue = 115200 });
-            baudRates.Add(new SerialPortsSettings() { BaudRateName = "230400 Baud", BaudRateValue = 230400 });
-
-            return baudRates;
+            return new[] { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400 }.ToDictionary(x => $"{x} Baud", x => x);
         }
 
         //获取所有校验位
-        public List<SerialPortsSettings> GetParities()
+        public Dictionary<string, Parity> GetParities()
         {
-            var parities = new List<SerialPortsSettings>();
-
-            parities.Add(new SerialPortsSettings() { ParityName = "无校验位", ParityValue = Parity.None });
-            parities.Add(new SerialPortsSettings() { ParityName = "奇校验", ParityValue = Parity.Odd });
-            parities.Add(new SerialPortsSettings() { ParityName = "偶校验", ParityValue = Parity.Even });
-            parities.Add(new SerialPortsSettings() { ParityName = "校验位常0", ParityValue = Parity.Space });
-            parities.Add(new SerialPortsSettings() { ParityName = "校验位常1", ParityValue = Parity.Mark });
-
-            return parities;
+            return new Dictionary<string, Parity>()
+            {
+                {"无校验位", Parity.None },
+                {"奇校验", Parity.Odd },
+                {"偶校验", Parity.Even },
+                {"校验位常0", Parity.Space },
+                {"校验位常1", Parity.Mark },
+            };
         }
 
-        //获取数据位
-        public static int[] GetDataBits = { 5, 6, 7, 8 };
+        //获取所有数据位
+        public Dictionary<int, int> GetDataBits()
+        {
+            return new[] { 5, 6, 7, 8 }.ToDictionary(x => x, x => x);
+        }
+
+        //获取所有停止位
+        public Dictionary<string, StopBits> GetStopBits()
+        {
+            return new Dictionary<string, StopBits>()
+            {
+                {"无停止位", StopBits.None },
+                {"1位", StopBits.One },
+                {"1.5位", StopBits.OnePointFive },
+                {"2位", StopBits.Two },
+            };
+        }
     }
 }

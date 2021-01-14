@@ -42,3 +42,4 @@ C:\Users\9426224\source\repos\PressureMeasurementApplication\bin\Debug\netcoreap
 C:\Users\9426224\source\repos\PressureMeasurementApplication\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Management.dll
 C:\Users\9426224\source\repos\PressureMeasurementApplication\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\9426224\source\repos\PressureMeasurementApplication\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\9426224\source\repos\PressureMeasurementApplication\obj\Debug\netcoreapp3.1\PressureMeasurementApplication.csproj.Fody.CopyLocal.cache

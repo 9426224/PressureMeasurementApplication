@@ -8,57 +8,33 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Management;
 using System.IO.Ports;
+using PropertyChanged;
 
 namespace PressureMeasurementApplication.ViewModel.SerialPort
 {
+    [AddINotifyPropertyChangedInterface]
     public class SerialPortViewModel : ViewModelBase 
     {        
-        public List<SerialPortsSettings> PortNameList { get; private set; }
-        public List<SerialPortsSettings> BaudRatesList { get; }
-        public List<SerialPortsSettings> ParitiesList { get; }
+        public Dictionary<string, string> PortNameList { get; private set; }
+        public Dictionary<string, int> BaudRatesList { get; }
+        public Dictionary<string, Parity> ParitiesList { get; }
+        public Dictionary<int, int> DataBitsList { get; }
+        public Dictionary<string, StopBits> StopBitsList { get; }
 
         public SerialPortViewModel()
         {
             PortNameList = SerialPortsSettings.Instance.GetPorts();
-
             BaudRatesList = SerialPortsSettings.Instance.GetBaudRates();
-
             ParitiesList = SerialPortsSettings.Instance.GetParities();
+            DataBitsList = SerialPortsSettings.Instance.GetDataBits();
+            StopBitsList = SerialPortsSettings.Instance.GetStopBits();
         }
 
-        public string PortName
-        {
-            get { return SerialPortModel.Instance.PortName; }
-            set
-            {
-                Regex r = new Regex("^C+O+M+[0-9]{1,2}");
-                if (value != null && value == r.Match(value).Value)
-                {
-                    SerialPortModel.Instance.PortName = value;
-                    RaisePropertyChanged("PortName");
-                }
-            }
-        }
-
-        public int BaudRate
-        {
-            get { return SerialPortModel.Instance.BaudRate; }
-            set 
-            {
-                SerialPortModel.Instance.BaudRate = value;
-                RaisePropertyChanged("BaudRate");
-            }
-        }
-
-        public Parity Parity
-        {
-            get { return SerialPortModel.Instance.Parity; }
-            set
-            {
-                SerialPortModel.Instance.Parity = value;
-                RaisePropertyChanged("Parity");
-            }
-        }
+        public string PortName { get; set; }
+        public int BaudRate { get; set; }
+        public Parity Parity { get; set; }
+        public Parity DataBits { get; set; }
+        public Parity StopBits { get; set; }
 
     }
 }

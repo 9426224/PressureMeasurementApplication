@@ -55,6 +55,10 @@
               "target": "Package",
               "version": "[3.1.7, )"
             },
+            "PropertyChanged.Fody": {
+              "target": "Package",
+              "version": "[3.3.1, )"
+            },
             "System.IO.Ports": {
               "target": "Package",
               "version": "[5.0.0, )"
