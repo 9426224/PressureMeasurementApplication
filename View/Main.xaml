@@ -5,19 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PressureMeasurementApplication.View" xmlns:local1="clr-namespace:PressureMeasurementApplication.ViewModel.SerialPort"
         mc:Ignorable="d"
-        Title="Main" Height="720" Width="1280" MaxHeight="720" MinHeight="720" MaxWidth="1280" MinWidth="1280" ResizeMode="NoResize">
+        Title="Main" Height="720" Width="1280" ResizeMode="CanMinimize" WindowStyle="ThreeDBorderWindow">
 
     <Window.DataContext>
         <local1:SerialPortViewModel/>
     </Window.DataContext>
 
     <Grid>
-        <GroupBox Header="串口通信设置" Margin="549,10,10,290"/>
+        <GroupBox Header="串口通信设置" Margin="1014,10,28,470"/>
 
-        <Label Content="串口号" HorizontalAlignment="Left" Margin="553,30,0,0" VerticalAlignment="Top"/>
+        <Label Content="串口号" HorizontalAlignment="Left" Margin="1033,44,0,0" VerticalAlignment="Top"/>        
+        <Label Content="波特率" HorizontalAlignment="Left" Margin="1033,71,0,0" VerticalAlignment="Top"/>
+        <Label Content="校验位" HorizontalAlignment="Left" Margin="1033,101,0,0" VerticalAlignment="Top"/>
+        <Label Content="数据位" HorizontalAlignment="Left" Margin="1033,131,0,0" VerticalAlignment="Top"/>
+        <Label Content="停止位" HorizontalAlignment="Left" Margin="1033,161,0,0" VerticalAlignment="Top"/>
+        <Label Content="握手协议" HorizontalAlignment="Left" Margin="1024,191,0,0" VerticalAlignment="Top"/>
+
+
         <ComboBox Name="portNameComboBox" 
                   HorizontalAlignment="Left" 
-                  Margin="600,33,0,0" 
+                  Margin="1080,46,0,0" 
                   VerticalAlignment="Top" 
                   Width="120" 
                   Height="22" 
@@ -27,28 +34,21 @@
                   DisplayMemberPath="Key"
                   SelectedValue="{Binding PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   />
-        <GroupBox Header="开关" Margin="550,190,10,228"/>
-        <Label Content="波特率" HorizontalAlignment="Left" Margin="553,60,0,0" VerticalAlignment="Top"/>
         <ComboBox Name="baudRateComboBox" 
                   HorizontalAlignment="Left" 
-                  Margin="600,63,0,0" 
+                  Margin="1080,74,0,0" 
                   VerticalAlignment="Top" 
                   Width="120" 
                   Height="22" 
                   ItemsSource="{Binding BaudRatesList}"
-                  SelectedIndex="0" 
+                  SelectedIndex="5" 
                   SelectedValuePath="Value"
                   DisplayMemberPath="Key"
                   SelectedValue="{Binding BaudRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   />
-
-        <Button Content="开启通信" HorizontalAlignment="Left" Margin="570,212,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
-        <Button Content="关闭通信" HorizontalAlignment="Left" Margin="680,212,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
-
-        <Label Content="校验位" HorizontalAlignment="Left" Margin="553,90,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="ParityComboBox" 
             HorizontalAlignment="Left" 
-            Margin="600,93,0,0" 
+            Margin="1080,104,0,0" 
             VerticalAlignment="Top" 
             Width="120" 
             Height="22" 
@@ -58,23 +58,21 @@
             DisplayMemberPath="Key"
             SelectedValue="{Binding Parity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             />
-        <Label Content="数据位" HorizontalAlignment="Left" Margin="553,120,0,0" VerticalAlignment="Top"/>
-        <Label Content="停止位" HorizontalAlignment="Left" Margin="553,150,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="DataBitsComboBox" 
             HorizontalAlignment="Left" 
-            Margin="600,123,0,0" 
+            Margin="1080,134,0,0" 
             VerticalAlignment="Top" 
             Width="120" 
             Height="22" 
             ItemsSource="{Binding DataBitsList}"
-            SelectedIndex="0" 
+            SelectedIndex="3" 
             SelectedValuePath="Value"
             DisplayMemberPath="Key"
             SelectedValue="{Binding DataBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             />
         <ComboBox x:Name="StopBitsComboBox" 
             HorizontalAlignment="Left" 
-            Margin="600,153,0,0" 
+            Margin="1080,164,0,0" 
             VerticalAlignment="Top" 
             Width="120" 
             Height="22" 
@@ -84,6 +82,24 @@
             DisplayMemberPath="Key"
             SelectedValue="{Binding StopBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             />
+        <ComboBox x:Name="HandshakesComboBox" 
+            HorizontalAlignment="Left" 
+            Margin="1080,195,0,0" 
+            VerticalAlignment="Top" 
+            Width="120" 
+            Height="22" 
+            ItemsSource="{Binding HandshakeList}"
+            SelectedIndex="0" 
+            SelectedValuePath="Value"
+            DisplayMemberPath="Key"
+            SelectedValue="{Binding Handshake, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            />
+        
+        <GroupBox Header="开关" Margin="1014,234,28,365"/>
+        <Button Content="开启通信" Command="{Binding OpenCommand}" HorizontalAlignment="Left" Margin="1044,256,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80" />
+        <Button Content="关闭通信" Command="{Binding CloseCommand}" HorizontalAlignment="Left" Margin="1148,256,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
+        <Button Content="刷新串口" Command="{Binding RefreshCommand}" HorizontalAlignment="Left" Margin="1148,256,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.553" Width="80"/>
+
 
     </Grid>
 </Window>

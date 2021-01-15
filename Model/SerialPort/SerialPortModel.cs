@@ -76,17 +76,17 @@ namespace PressureMeasurementApplication.Model.SerialPort
             }
             catch (IOException)
             {
-                if (OnStatusChanged != null)
+                if (OnStatusChanged is not null)
                     OnStatusChanged(this, string.Format("{0} 端口不存在。", portName));
             }
             catch (UnauthorizedAccessException)
             {
-                if (OnStatusChanged != null)
+                if (OnStatusChanged is not null)
                     OnStatusChanged(this, string.Format("{0} 端口正在使用中。", portName));
             }
             catch (Exception ex)
             {
-                if (OnStatusChanged != null)
+                if (OnStatusChanged is not null)
                     OnStatusChanged(this, "错误: " + ex.Message);
             }
 
@@ -108,7 +108,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
                 string p = serialPort.Parity.ToString().Substring(0, 1);
                 string hs = serialPort.Handshake == Handshake.None ? "没有握手" : serialPort.Handshake.ToString();
 
-                if (OnStatusChanged != null)
+                if (OnStatusChanged is not null)
                     OnStatusChanged(this, string.Format(
                     "连接到 {0}: 波特率: {1} Bps, {2}{3}{4}, {5}。",
                     serialPort.PortName,
@@ -124,9 +124,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
             else
             {
                 if (OnStatusChanged != null)
-                    OnStatusChanged(this, string.Format(
-                    "{0} 端口正在使用中。",
-                    portName));
+                    OnStatusChanged(this, string.Format("{0} 端口正在使用中。", portName));
 
                 if (OnSerialPortOpened != null)
                     OnSerialPortOpened(this, false);
