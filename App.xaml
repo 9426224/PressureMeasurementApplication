@@ -4,6 +4,15 @@
              xmlns:local="clr-namespace:PressureMeasurementApplication"
              Startup="OnStartup">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="Resources/Themes/Metro/Light/Metro.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="Resources/Themes/Metro/Light/Metro.MSControls.Toolkit.Implicit.xaml" />
+                <ResourceDictionary Source="Resources/Themes/Metro/OverwriteResources.xaml" />
+
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

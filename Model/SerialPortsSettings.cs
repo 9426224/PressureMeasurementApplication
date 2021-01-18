@@ -7,7 +7,7 @@ using System.Management;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
 
-namespace PressureMeasurementApplication.Model.SerialPort
+namespace PressureMeasurementApplication.Model
 {
     [Serializable]
     public class SerialPortsSettings : ModelBase<SerialPortsSettings>
@@ -20,7 +20,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
 
             return moc.OfType<ManagementBaseObject>().ToDictionary(
                 x => x.GetPropertyValue("Caption").ToString() ,
-                x => Regex.Match(x.GetPropertyValue("DeviceID").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value);
+                x => Regex.Match(x.GetPropertyValue("Caption").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value);
         }
 
         //获取所有可设置的波特率

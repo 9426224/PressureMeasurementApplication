@@ -5,7 +5,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.IO;
 
-namespace PressureMeasurementApplication.Model.SerialPort
+namespace PressureMeasurementApplication.Model
 {
     public class SerialPortModel : ModelBase<SerialPortModel>
     {
@@ -13,7 +13,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
         private volatile bool keepReading;
         private Thread readThread;
 
-        public SerialPortModel()
+        private SerialPortModel()
         {
             this.serialPort = new System.IO.Ports.SerialPort();
             keepReading = false;
@@ -68,7 +68,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
                 serialPort.StopBits = stopBits;
                 serialPort.Handshake = handshake;
 
-                serialPort.ReadTimeout = 50;
+                serialPort.ReadTimeout = 5000;
                 serialPort.WriteTimeout = 50;
 
                 serialPort.Open();
@@ -216,7 +216,7 @@ namespace PressureMeasurementApplication.Model.SerialPort
                     {
                         string data = serialPort.ReadLine();
 
-                        if(OnDataReceived != null)
+                        if (OnDataReceived != null)
                         {
                             OnDataReceived(this, data);
                         }

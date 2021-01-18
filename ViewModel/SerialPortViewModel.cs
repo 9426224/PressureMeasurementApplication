@@ -1,4 +1,4 @@
-﻿using PressureMeasurementApplication.Model.SerialPort;
+﻿using PressureMeasurementApplication.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ using PropertyChanged;
 using System.Windows.Input;
 using PressureMeasurementApplication.Utils;
 
-namespace PressureMeasurementApplication.ViewModel.SerialPort
+namespace PressureMeasurementApplication.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
     public class SerialPortViewModel : ViewModelBase 
