@@ -11,6 +11,7 @@ using System.IO.Ports;
 using PropertyChanged;
 using System.Windows.Input;
 using PressureMeasurementApplication.Utils;
+using System.Threading.Tasks;
 
 namespace PressureMeasurementApplication.ViewModel
 {
@@ -30,16 +31,16 @@ namespace PressureMeasurementApplication.ViewModel
 
         public SerialPortViewModel()
         {
-            PortNameList = SerialPortsSettings.Instance.GetPorts();
+            _ = RefreshPortNameList();
             BaudRatesList = SerialPortsSettings.Instance.GetBaudRates();
             ParitiesList = SerialPortsSettings.Instance.GetParities();
             DataBitsList = SerialPortsSettings.Instance.GetDataBits();
             StopBitsList = SerialPortsSettings.Instance.GetStopBits();
             HandshakeList = SerialPortsSettings.Instance.GetHandshakes();
 
-            OpenCommand = new RelayCommand(Open, () => true);
-            CloseCommand = new RelayCommand(Close, () => true);
-            RefreshCommand = new RelayCommand(RefreshPortNameList, () => true);
+            OpenCommand = new AwaitableDelegateCommand(OpenAsync);
+            CloseCommand = new AwaitableDelegateCommand(CloseAsync);
+            RefreshCommand = new AwaitableDelegateCommand(RefreshPortNameList, () => true);
         }
 
         public string PortName { get; set; }
@@ -50,21 +51,22 @@ namespace PressureMeasurementApplication.ViewModel
         public Handshake Handshake { get; set; }
 
         //刷新端口列表
-        public void RefreshPortNameList()
+        public async Task RefreshPortNameList()
         {
-            PortNameList = SerialPortsSettings.Instance.GetPorts();
+            PortNameList = await SerialPortsSettings.Instance.GetPorts();
         }
 
         //开启设备
-        public void Open()
+        public async Task OpenAsync()
         {
-            SerialPortModel.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
+            await SerialPortModel.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
+            var buffer = await SerialPortModel.Instance.ReadPort();
         }
 
         //关闭设备
-        public void Close()
+        public async Task CloseAsync()
         {
-            SerialPortModel.Instance.Close();
+            await SerialPortModel.Instance.Close();
         }
 
     }

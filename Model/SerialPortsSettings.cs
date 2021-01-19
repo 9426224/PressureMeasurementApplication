@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace PressureMeasurementApplication.Model
 {
@@ -13,14 +14,16 @@ namespace PressureMeasurementApplication.Model
     public class SerialPortsSettings : ModelBase<SerialPortsSettings>
     {
         //获取本机所有COM端口设备
-        public Dictionary<string, string> GetPorts()
+        public async Task<Dictionary<string, string>> GetPorts()
         {
             using var searcher = new ManagementObjectSearcher(@"SELECT DeviceID,Caption FROM Win32_PnPEntity Where pnpclass = 'Ports' ");
-            using var moc = searcher.Get();
 
-            return moc.OfType<ManagementBaseObject>().ToDictionary(
-                x => x.GetPropertyValue("Caption").ToString() ,
-                x => Regex.Match(x.GetPropertyValue("Caption").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value);
+            return await Task.Run(() =>
+                searcher.Get().OfType<ManagementBaseObject>().ToDictionary(
+                    x => x.GetPropertyValue("Caption").ToString(),
+                    x => Regex.Match(x.GetPropertyValue("Caption").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value)
+                );
+            
         }
 
         //获取所有可设置的波特率
