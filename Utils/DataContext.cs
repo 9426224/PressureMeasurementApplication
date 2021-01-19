@@ -13,7 +13,6 @@ namespace PressureMeasurementApplication.Utils
         public DataContext(DbContextOptions options) :base(options)
         {
             this.Database.Migrate();
-            
         }
     }
 }

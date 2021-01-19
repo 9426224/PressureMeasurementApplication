@@ -22,13 +22,6 @@ namespace PressureMeasurementApplication
         public ServiceProvider serviceProvider { get; private set; }
         public IConfigurationRoot Configuration { get; private set; }
 
-        public App()
-        {
-            ServiceCollection services = new ServiceCollection();
-            ConfigureServices(services);
-            serviceProvider = services.BuildServiceProvider();
-        }
-
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<Main>();
@@ -39,13 +32,17 @@ namespace PressureMeasurementApplication
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            serviceProvider.GetService<Main>().Show();
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             Configuration = builder.Build();
+
+            ServiceCollection services = new ServiceCollection();
+            ConfigureServices(services);            
+            serviceProvider = services.BuildServiceProvider();
+
+            serviceProvider.GetService<Main>().Show();
 
         }
     }

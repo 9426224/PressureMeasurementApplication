@@ -24,6 +24,13 @@ namespace PressureMeasurementApplication.ViewModel
         public Dictionary<StopBits, string> StopBitsList { get; }
         public Dictionary<Handshake, string> HandshakeList { get; }
 
+        public string PortName { get; set; }
+        public int BaudRate { get; set; } = 115200;
+        public Parity Parity { get; set; } = Parity.None;
+        public int DataBits { get; set; } = 8;
+        public StopBits StopBits { get; set; } = StopBits.One;
+        public Handshake Handshake { get; set; } = Handshake.None;
+
         public ICommand OpenCommand { get; }
         public ICommand CloseCommand { get; }
         public ICommand RefreshCommand { get; }
@@ -42,20 +49,19 @@ namespace PressureMeasurementApplication.ViewModel
             RefreshCommand = new AwaitableDelegateCommand(RefreshPortNameList, () => true);
         }
 
-        public string PortName { get; set; }
-        public int BaudRate { get; set; } = 115200;
-        public Parity Parity { get; set; } = Parity.None;
-        public int DataBits { get; set; } = 8;
-        public StopBits StopBits { get; set; } = StopBits.One;
-        public Handshake Handshake { get; set; } = Handshake.None;
-
-        //刷新端口列表
+        /// <summary>
+        /// 使用<see cref="SerialPortsSettings.GetPorts">GetPorts</see>刷新串口列表。
+        /// </summary>
+        /// <returns>代表异步获取串口列表的任务。</returns>
         public async Task RefreshPortNameList()
         {
             PortNameList = await SerialPortsSettings.Instance.GetPorts();
         }
 
-        //开启设备
+        /// <summary>
+        /// 使用<see cref="SerialPortManager.Open">Open</see>方法开启设备串口连接。
+        /// </summary>
+        /// <returns>代表异步开启设备的任务。</returns>
         public async Task OpenAsync()
         {
             if (!PortNameList.ContainsKey(PortName))
@@ -65,8 +71,8 @@ namespace PressureMeasurementApplication.ViewModel
             }
             try
             {
-                await SerialPortModel.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
-                var buffer = await SerialPortModel.Instance.ReadPort();
+                await SerialPortManager.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
+                var buffer = await SerialPortManager.Instance.ReadPort();
             }
             catch (Exception e)
             {
@@ -74,10 +80,13 @@ namespace PressureMeasurementApplication.ViewModel
             }
         }
 
-        //关闭设备
+        /// <summary>
+        /// 使用<see cref="SerialPortManager.Close">Close</see>方法关闭设备。
+        /// </summary>
+        /// <returns>代表异步关闭设备的任务。</returns>
         public async Task CloseAsync()
         {
-            await SerialPortModel.Instance.Close();
+            await SerialPortManager.Instance.Close();
         }
 
     }

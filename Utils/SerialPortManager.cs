@@ -6,34 +6,39 @@ using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace PressureMeasurementApplication.Model
+namespace PressureMeasurementApplication.Utils
 {
-    public class SerialPortModel : ModelBase<SerialPortModel>
+    public class SerialPortManager : SingletonBase<SerialPortManager>
     {
+        /// <summary>
+        /// 实例化SerialPort。
+        /// </summary>
         private System.IO.Ports.SerialPort serialPort;
+
+        /// <summary>
+        /// 缓存接收数据使用的Byte数组。
+        /// </summary>
         private byte[] buffer = new byte[1000];
 
-        public bool DeviceMode ;
-
-        private SerialPortModel()
+        private SerialPortManager()
         {
             this.serialPort = new System.IO.Ports.SerialPort();
         }
 
         /// <summary>
-        /// 如果串口确定连接则返回True
+        /// 返回<see cref="SerialPort.IsOpen">IsOpen</see>，True表示串口已开启，False表示串口未开启。
         /// </summary>
         public bool IsOpen { get { return serialPort.IsOpen; } }
 
         /// <summary>
-        /// 开启串口连接
+        /// 通过<see cref="SerialPort.Open">Open</see>方法开启串口连接，进行该操作前会使用<see cref="SerialPortManager.Close">Close</see>方法关闭所有串口通信。
         /// </summary>
-        /// <param name="portName">串口名</param>
-        /// <param name="baudRate">波特率</param>
-        /// <param name="parity">校验位</param>
-        /// <param name="dataBits">数据位</param>
-        /// <param name="stopBits">停止位</param>
-        /// <param name="handshake"></param>
+        /// <param name="portName">串口名:<see cref="SerialPort.PortName"/></param>
+        /// <param name="baudRate">波特率:<see cref="SerialPort.BaudRate"/></param>
+        /// <param name="parity">校验位:<see cref="SerialPort.Parity"/></param>
+        /// <param name="dataBits">数据位:<see cref="SerialPort.DataBits"/></param>
+        /// <param name="stopBits">停止位:<see cref="SerialPort.StopBits"/></param>
+        /// <param name="handshake">握手协议:<see cref="SerialPort.Handshake"/></param>
         public async Task Open(
                 string portName,
                 int baudRate,
@@ -62,7 +67,7 @@ namespace PressureMeasurementApplication.Model
         }
 
         /// <summary>
-        /// 关闭串口连接
+        /// 通过<see cref="SerialPort.Close">Close</see>方法关闭串口连接。
         /// </summary>
         public async Task Close()
         {
@@ -73,9 +78,9 @@ namespace PressureMeasurementApplication.Model
         }
 
         /// <summary>
-        /// 发送/写入数据至串口
+        /// 通过<see cref="SerialPort.BaseStream">BaseStream</see>中的<see cref="WriteAsync"/>方法发送/写入数据至串口。
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">外部返回的需要发送至串口的消息数组。</param>
         public async Task SendData(Memory<byte> message)
         {
             if (serialPort.IsOpen)
@@ -86,7 +91,7 @@ namespace PressureMeasurementApplication.Model
         }
 
         /// <summary>
-        /// 读取串口
+        /// 通过<see cref="SerialPort.BaseStream">BaseStream</see>中的<see cref="ReadAsync"/>方法读取串口数据并保存至<see cref="SerialPortManager.buffer">Buffer</see>中。
         /// </summary>
         public async Task<Memory<Byte>> ReadPort()
         {

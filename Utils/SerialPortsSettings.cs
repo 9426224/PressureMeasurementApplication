@@ -7,13 +7,17 @@ using System.Management;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using PressureMeasurementApplication.Utils;
 
-namespace PressureMeasurementApplication.Model
+namespace PressureMeasurementApplication.Utils
 {
     [Serializable]
-    public class SerialPortsSettings : ModelBase<SerialPortsSettings>
+    public class SerialPortsSettings : SingletonBase<SerialPortsSettings>
     {
-        //获取本机所有COM端口设备
+        /// <summary>
+        /// 返回一个Hashmap，存储使用<see cref="ManagementObjectSearcher"/>从<see cref="Win32_PnPEntity"/>中获取到的所有串口类型设备的合集。
+        /// </summary>
+        /// <returns><see cref="Dictionary{string, string}"/></returns>
         public async Task<Dictionary<string, string>> GetPorts()
         {
             using var searcher = new ManagementObjectSearcher(@"SELECT DeviceID,Caption FROM Win32_PnPEntity Where pnpclass = 'Ports' ");
@@ -26,12 +30,18 @@ namespace PressureMeasurementApplication.Model
             
         }
 
-        //获取所有可设置的波特率
+        /// <summary>
+        /// 返回一个Hashmap，存储<see cref="SerialPort.BaudRate">BaudRate</see>中的推荐设置的波特率的合集。
+        /// </summary>
+        /// <returns><see cref="Dictionary{TKey, TValue}"/></returns>
         public Dictionary<int, string> GetBaudRates() 
             => new[] { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400 }.ToDictionary(x => x, x => $"{x} Baud");
 
 
-        //获取所有校验位
+        /// <summary>
+        /// 返回一个Hashmap，存储<see cref="Parity"/>中的所有校验位合集。
+        /// </summary>
+        /// <returns><see cref="Dictionary{Parity, string}"/></returns>
         public Dictionary<Parity, string> GetParities()
         {
             return new Dictionary<Parity, string>()
@@ -44,11 +54,17 @@ namespace PressureMeasurementApplication.Model
             };
         }
 
-        //获取所有数据位
+        /// <summary>
+        /// 返回一个Hashmap，存储<see cref="SerialPort.DataBits">DataBits</see>中的所有数据位合集。
+        /// </summary>
+        /// <returns><see cref="Dictionary{int, int}"/></returns>
         public Dictionary<int, int> GetDataBits()
             => new[] { 5, 6, 7, 8 }.ToDictionary(x => x, x => x);
 
-        //获取所有停止位
+        /// <summary>
+        /// 返回一个Hashmap，存储<see cref="StopBits"/>中的所有停止位合集。
+        /// </summary>
+        /// <returns><see cref="Dictionary{StopBits, string}"/></returns>
         public Dictionary<StopBits, string> GetStopBits()
         {
             return new Dictionary<StopBits, string>()
@@ -60,6 +76,10 @@ namespace PressureMeasurementApplication.Model
             };
         }
 
+        /// <summary>
+        /// 返回一个Hashmap，存储<see cref="Handshake"/>中的所有握手状态。
+        /// </summary>
+        /// <returns><see cref="Dictionary{Handshake, string}"/></returns>
         public Dictionary<Handshake, string> GetHandshakes()
         {
             return new Dictionary<Handshake, string>()
