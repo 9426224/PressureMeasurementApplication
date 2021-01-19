@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PressureMeasurementApplication.Utils
@@ -98,6 +99,10 @@ namespace PressureMeasurementApplication.Utils
                 isExecuting = true;
                 delegateCommand.RaiseCanExecuteChanged();
                 await executeMethod(obj);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("未处理异常：" + e.Message);
             }
             finally
             {

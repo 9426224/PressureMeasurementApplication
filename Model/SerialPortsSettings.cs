@@ -20,27 +20,27 @@ namespace PressureMeasurementApplication.Model
 
             return await Task.Run(() =>
                 searcher.Get().OfType<ManagementBaseObject>().ToDictionary(
-                    x => x.GetPropertyValue("Caption").ToString(),
-                    x => Regex.Match(x.GetPropertyValue("Caption").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value)
+                    x => Regex.Match(x.GetPropertyValue("Caption").ToString(), @"^.+\((COM\d+)\)$").Groups[1].Value,
+                    x => x.GetPropertyValue("Caption").ToString())
                 );
             
         }
 
         //获取所有可设置的波特率
-        public Dictionary<string, int> GetBaudRates() 
-            => new[] { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400 }.ToDictionary(x => $"{x} Baud", x => x);
+        public Dictionary<int, string> GetBaudRates() 
+            => new[] { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400 }.ToDictionary(x => x, x => $"{x} Baud");
 
 
         //获取所有校验位
-        public Dictionary<string, Parity> GetParities()
+        public Dictionary<Parity, string> GetParities()
         {
-            return new Dictionary<string, Parity>()
+            return new Dictionary<Parity, string>()
             {
-                {"无校验位", Parity.None },
-                {"奇校验", Parity.Odd },
-                {"偶校验", Parity.Even },
-                {"校验位常0", Parity.Space },
-                {"校验位常1", Parity.Mark },
+                {Parity.None, "无校验位"},
+                {Parity.Odd, "奇校验"},
+                {Parity.Even, "偶校验"},
+                {Parity.Space, "校验位常0"},
+                {Parity.Mark, "校验位常1"},
             };
         }
 
@@ -49,25 +49,25 @@ namespace PressureMeasurementApplication.Model
             => new[] { 5, 6, 7, 8 }.ToDictionary(x => x, x => x);
 
         //获取所有停止位
-        public Dictionary<string, StopBits> GetStopBits()
+        public Dictionary<StopBits, string> GetStopBits()
         {
-            return new Dictionary<string, StopBits>()
+            return new Dictionary<StopBits, string>()
             {
                 //{"无停止位", StopBits.None },
-                {"1位", StopBits.One },
-                {"1.5位", StopBits.OnePointFive },
-                {"2位", StopBits.Two },
+                {StopBits.One, "1位"},
+                {StopBits.OnePointFive, "1.5位"},
+                {StopBits.Two, "2位"},
             };
         }
 
-        public Dictionary<string, Handshake> GetHandshakes()
+        public Dictionary<Handshake, string> GetHandshakes()
         {
-            return new Dictionary<string, Handshake>()
+            return new Dictionary<Handshake, string>()
             {
-                {"无", Handshake.None },
-                {"RTS", Handshake.RequestToSend },
-                {"RTS与XON/XOFF", Handshake.RequestToSendXOnXOff },
-                {"XON/XOFF", Handshake.XOnXOff }
+                {Handshake.None, "无"},
+                {Handshake.RequestToSend, "RTS"},
+                {Handshake.RequestToSendXOnXOff, "RTS与XON/XOFF"},
+                {Handshake.XOnXOff, "XON/XOFF"}
             };
         }
     }

@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PressureMeasurementApplication.Utils;
 using PressureMeasurementApplication.View;
 using System;
 using System.Collections.Generic;
@@ -30,6 +32,9 @@ namespace PressureMeasurementApplication
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<Main>();
+
+            services.AddDbContext<DataContext>(options => 
+                options.UseSqlite(Configuration.GetConnectionString("SqlConnection")));
         }
 
         private void OnStartup(object sender, StartupEventArgs e)
@@ -40,9 +45,8 @@ namespace PressureMeasurementApplication
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            //Configuration = builder
+            Configuration = builder.Build();
 
-            //ConfigurationServices(Service)
         }
     }
 }

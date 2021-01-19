@@ -159,13 +159,20 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="350"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <pages:SerialPortSettingsView Grid.Column="1" Grid.Row="1" Margin="5" />
+            <pages:SerialPortSettingsView Grid.Row="0" Margin="5" />
+            
+            <pages:DataProcessView Grid.Row="1" Margin="5"/>
 
-
+        </Grid>
+        <Grid Grid.Column="1">
+            
+        </Grid>
     </Grid>
 </Window>

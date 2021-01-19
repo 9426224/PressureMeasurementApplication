@@ -13,6 +13,8 @@ namespace PressureMeasurementApplication.Model
         private System.IO.Ports.SerialPort serialPort;
         private byte[] buffer = new byte[1000];
 
+        public bool DeviceMode ;
+
         private SerialPortModel()
         {
             this.serialPort = new System.IO.Ports.SerialPort();

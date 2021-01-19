@@ -15,15 +15,14 @@ using System.Threading.Tasks;
 
 namespace PressureMeasurementApplication.ViewModel
 {
-    [AddINotifyPropertyChangedInterface]
     public class SerialPortViewModel : ViewModelBase 
     {
         public Dictionary<string, string> PortNameList { get; private set; }
-        public Dictionary<string, int> BaudRatesList { get; }
-        public Dictionary<string, Parity> ParitiesList { get; }
+        public Dictionary<int, string> BaudRatesList { get; }
+        public Dictionary<Parity, string> ParitiesList { get; }
         public Dictionary<int, int> DataBitsList { get; }
-        public Dictionary<string, StopBits> StopBitsList { get; }
-        public Dictionary<string, Handshake> HandshakeList { get; }
+        public Dictionary<StopBits, string> StopBitsList { get; }
+        public Dictionary<Handshake, string> HandshakeList { get; }
 
         public ICommand OpenCommand { get; }
         public ICommand CloseCommand { get; }
@@ -44,11 +43,11 @@ namespace PressureMeasurementApplication.ViewModel
         }
 
         public string PortName { get; set; }
-        public int BaudRate { get; set; }
-        public Parity Parity { get; set; }
-        public int DataBits { get; set; }
-        public StopBits StopBits { get; set; }
-        public Handshake Handshake { get; set; }
+        public int BaudRate { get; set; } = 115200;
+        public Parity Parity { get; set; } = Parity.None;
+        public int DataBits { get; set; } = 8;
+        public StopBits StopBits { get; set; } = StopBits.One;
+        public Handshake Handshake { get; set; } = Handshake.None;
 
         //刷新端口列表
         public async Task RefreshPortNameList()
@@ -59,8 +58,20 @@ namespace PressureMeasurementApplication.ViewModel
         //开启设备
         public async Task OpenAsync()
         {
-            await SerialPortModel.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
-            var buffer = await SerialPortModel.Instance.ReadPort();
+            if (!PortNameList.ContainsKey(PortName))
+            {
+                MessageBox.Show("错误:未选择串口设备！");
+                return;
+            }
+            try
+            {
+                await SerialPortModel.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
+                var buffer = await SerialPortModel.Instance.ReadPort();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("错误:" + e.Message);
+            }
         }
 
         //关闭设备

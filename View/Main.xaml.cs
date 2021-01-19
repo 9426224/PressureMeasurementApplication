@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PressureMeasurementApplication.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -17,9 +18,12 @@ namespace PressureMeasurementApplication.View
     /// </summary>
     public partial class Main : Window
     {
-        public Main()
+        private readonly DataContext dataContext;
+        public Main(DataContext dataContext)
         {
             InitializeComponent();
+
+            this.dataContext = dataContext;
         }
 
         private void PART_TITLEBAR_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

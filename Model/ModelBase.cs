@@ -1,9 +1,11 @@
-﻿using System;
+﻿using PropertyChanged;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PressureMeasurementApplication.Model
 {
+    [AddINotifyPropertyChangedInterface]
     public class ModelBase <T> where T : class
     {
         private static T InstanceCreator()
