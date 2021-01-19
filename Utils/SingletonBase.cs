@@ -18,6 +18,5 @@ namespace PressureMeasurementApplication.Utils
         private static readonly Lazy<T> _Instance = new Lazy<T>(() => InstanceCreator());
 
         public static T Instance { get { return _Instance.Value; } }
-    {
     }
 }

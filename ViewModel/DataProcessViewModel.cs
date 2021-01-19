@@ -15,6 +15,8 @@ namespace PressureMeasurementApplication.ViewModel
     {
         public DataModel DataModel => DataModel.Instance;
 
+        public DataContext dataContext;
+
         public ICommand ReadDeviceDataCommand { get; }
         public ICommand AddDataToLocalCommand { get; }
 
@@ -32,7 +34,7 @@ namespace PressureMeasurementApplication.ViewModel
         }
 
         public async Task GetData()
-            =>DataModel.Data = (await SerialPortModel.Instance.ReadPort()).ToArray();
+            =>DataModel.Data = (await SerialPortManager.Instance.ReadPort()).ToArray();
 
     }
 }

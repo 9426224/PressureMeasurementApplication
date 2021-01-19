@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using PressureMeasurementApplication.Utils;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PressureMeasurementApplication.Model
 {
-    public class DataModel : ModelBase
+    public class DataModel : ModelBase<DataModel>
     {
         //存储读取到的原始byte类型数据。
         [AlsoNotifyFor(nameof(DataString))]
