@@ -26,7 +26,7 @@ namespace PressureMeasurementApplication
         {
             services.AddSingleton<Main>();
 
-            services.AddDbContext<DataContext>(options => 
+            services.AddDbContext<SQLiteDataContext>(options => 
                 options.UseSqlite(Configuration.GetConnectionString("SqlConnection")));
         }
 

@@ -18,8 +18,8 @@ namespace PressureMeasurementApplication.View
     /// </summary>
     public partial class Main : Window
     {
-        private readonly DataContext dataContext;
-        public Main(DataContext dataContext)
+        private readonly SQLiteDataContext dataContext;
+        public Main(SQLiteDataContext dataContext)
         {
             InitializeComponent();
 

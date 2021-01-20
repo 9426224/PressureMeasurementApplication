@@ -13,7 +13,7 @@ namespace PressureMeasurementApplication.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class DataProcessViewModel : ViewModelBase
     {
-        public DataContext dataContext;
+        public SQLiteDataContext Context;
 
         public ICommand GetDataCommand { get; }
 
