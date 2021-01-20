@@ -72,7 +72,6 @@ namespace PressureMeasurementApplication.ViewModel
             try
             {
                 await SerialPortManager.Instance.Open(PortName, BaudRate, Parity, DataBits, StopBits, Handshake);
-                var buffer = await SerialPortManager.Instance.ReadPort();
             }
             catch (Exception e)
             {

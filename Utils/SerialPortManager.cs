@@ -58,7 +58,7 @@ namespace PressureMeasurementApplication.Utils
                 serialPort.StopBits = stopBits;
                 serialPort.Handshake = handshake;
 
-                serialPort.ReadTimeout = 200;
+                serialPort.ReadTimeout = 1000;
                 serialPort.WriteTimeout = 50;
 
                 serialPort.Open();
@@ -97,14 +97,26 @@ namespace PressureMeasurementApplication.Utils
         {
             if (serialPort.IsOpen)
             {
-                await serialPort.BaseStream.ReadAsync(buffer, 0, 1);
 
-                var length = buffer[0];
+                while (true)
+                {
+                    await serialPort.BaseStream.ReadAsync(buffer, 1 , 1);
 
-                await serialPort.BaseStream.ReadAsync(buffer, 1, length);
+                    if (buffer[0] == SerialPortProtocol.Instance.StartBit[0]
+                        && buffer[1] == SerialPortProtocol.Instance.StartBit[1])
+                    {
+                        break;
+                    }
 
-                return new Memory<byte>(buffer, 0, length);
-               
+                    buffer[0] = buffer[1];
+                }
+
+                await serialPort.BaseStream.ReadAsync(buffer, 2, 3);
+                await serialPort.BaseStream.ReadAsync(buffer, 5, buffer[4] + 3);
+
+
+                return new Memory<byte>(buffer, 0, buffer[4] + 8);
+
             }
             throw new InvalidOperationException("串口未打开");
         }

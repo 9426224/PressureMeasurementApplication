@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PressureMeasurementApplication.View" 
-        xmlns:pages="clr-namespace:PressureMeasurementApplication.View.Pages" 
+        xmlns:usercontrol="clr-namespace:PressureMeasurementApplication.View.Pages" 
         mc:Ignorable="d"
         Title="Main" 
         Height="720" 
@@ -166,9 +166,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <pages:SerialPortSettingsView Grid.Row="0" Margin="5" />
-            
-            <pages:DataProcessView Grid.Row="1" Margin="5"/>
+            <usercontrol:SerialPortSettingsView Grid.Row="0" Margin="5" />
+
+            <usercontrol:DataProcessView Grid.Row="1" Margin="5"/>
 
         </Grid>
         <Grid Grid.Column="1">

@@ -11,21 +11,30 @@
         <viewmodel:DataProcessViewModel/>
     </UserControl.DataContext>
     <Grid>
-        <GroupBox Header="历史项目管理">
+        <GroupBox Header="历史项目管理" Style="{StaticResource GroupBoxStyleOverride}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 5 0 5">
-                    <Button Content="读取设备存储" Command="{Binding ReadDeviceDataCommand}" />
+                    <Button Content=" 读取设备存储 " Command="{Binding GetDataCommand}" />
                     <Label Width="20"/>
-                    <Button Content="添加数据至本地存储"/>
+                    <Button Content="添加至本地存储"/>
                 </StackPanel>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" >
                     <TextBlock Text="{Binding DataModel.DataString, Mode=OneWay}" Width="200"/>
                 </Grid>
-
+                <ListView Grid.Row="2" Height="250" Style="{StaticResource ListBoxStyle}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="序号" Width="40"></GridViewColumn>
+                            <GridViewColumn Header="时间" Width="40"></GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                
             </Grid>
             
         </GroupBox>
