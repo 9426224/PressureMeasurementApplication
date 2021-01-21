@@ -18,9 +18,11 @@ namespace PressureMeasurementApplication.ViewModel
 
         public ICommand GetDataCommand { get; }
 
-        public MissionViewModel()
+        public MissionViewModel(SQLiteDataContext dataContext)
         {
             GetDataCommand = new AwaitableDelegateCommand(SerialPortProtocol.Instance.GetData);
+
+            this.dataContext = dataContext;
         }
     }
 }

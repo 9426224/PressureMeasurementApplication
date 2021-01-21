@@ -1,4 +1,5 @@
 ﻿using PressureMeasurementApplication.Utils;
+using PressureMeasurementApplication.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,7 @@ namespace PressureMeasurementApplication.View
     public partial class Main : Window
     {
         private readonly SQLiteDataContext dataContext;
+
         public Main(SQLiteDataContext dataContext)
         {
             InitializeComponent();

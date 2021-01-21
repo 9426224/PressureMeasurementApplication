@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PressureMeasurementApplication.View" 
         xmlns:usercontrol="clr-namespace:PressureMeasurementApplication.View.Pages" 
+        xmlns:viewmodel="clr-namespace:PressureMeasurementApplication.ViewModel"
         mc:Ignorable="d"
         Title="Main" 
         Height="720" 
         Width="1280" 
         ResizeMode="NoResize" 
-        Style="{DynamicResource MetroWindowsStyle}">
+        Style="{DynamicResource MetroWindowsStyle}"
+        DataContext="{DynamicResource ViewModelBase}">
+
+    <Window.DataContext>
+        <viewmodel:ViewModelBase />
+    </Window.DataContext>
 
     <Window.Resources>
         <Style x:Key="MetroWindowsStyle" TargetType="{x:Type Window}">
