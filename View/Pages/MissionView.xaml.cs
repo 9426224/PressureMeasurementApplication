@@ -17,11 +17,11 @@ using System.Windows.Shapes;
 namespace PressureMeasurementApplication.View.Pages
 {
     /// <summary>
-    /// Interaction logic for SerialPortSettingsView.xaml
+    /// Interaction logic for MissionView.xaml
     /// </summary>
-    public partial class SerialPortSettingsView : UserControl
+    public partial class MissionView : UserControl
     {
-        public SerialPortSettingsView()
+        public MissionView()
         {
             InitializeComponent();
         }

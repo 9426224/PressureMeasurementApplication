@@ -166,9 +166,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <usercontrol:SerialPortSettingsView Grid.Row="0" Margin="5" />
+            <usercontrol:SerialPortView Grid.Row="0" Margin="5" />
 
-            <usercontrol:DataProcessView Grid.Row="1" Margin="5"/>
+            <usercontrol:MissionView Grid.Row="1" Margin="5"/>
 
         </Grid>
         <Grid Grid.Column="1">

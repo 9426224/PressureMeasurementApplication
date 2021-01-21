@@ -9,21 +9,133 @@ namespace PressureMeasurementApplication.Utils
 {
     public class SerialPortProtocol : SingletonBase<SerialPortProtocol>
     {
+        /// <summary>
+        /// 起始位
+        /// </summary>
         public byte[] StartBit { get; private set; } = { 0xF1, 0xA9 };
-        public byte[] StopBit { get; private set; } = { 0xBE, 0x7A };
-        
 
+        /// <summary>
+        /// 停止位
+        /// </summary>
+        public byte[] StopBit { get; private set; } = { 0xBE, 0x7A };
 
         private SerialPortProtocol()
         {
 
         }
 
-        public bool DataProof(byte[] data)
+        /// <summary>
+        /// 调用此函数以持续获取串口返回数据。
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetData()
         {
-            return true;
+            await StartFlashTransfer();
+            while (true)
+            {
+                var returnList = (await SerialPortManager.Instance.ReadPort()).ToArray();
+
+                var type = SerialPortProtocol.Instance.AnalysisData(returnList);
+                var data = returnList.Skip(5).Take(returnList[4]).ToArray();
+
+                switch (type)
+                {
+                    case CommandType.TransferDone:
+                        break;
+                    case CommandType.FlashData:
+                        break;
+                    case CommandType.StreamData:
+                        break;
+                    default:
+                        continue;
+                }
+            }
         }
-        
+
+        /// <summary>
+        /// 发送命令至串口通知停止传送数据。
+        /// </summary>
+        /// <returns></returns>
+        public async Task StopTransfer()
+        {
+            //TO-DO
+
+            //var returnData = new byte[] { 0xF1, 0xA9, 0x80, 0x01, 0x00, 0x00, 0xBE, 0x7A };
+
+            //returnData[5] = CRC(returnData.Take(5).ToArray());
+
+            byte[] sendData = { 1 };
+            await SerialPortManager.Instance.SendData(sendData);
+        }
+
+        /// <summary>
+        /// 开始传输Flash缓存数据。
+        /// </summary>
+        /// <returns></returns>
+        public async Task StartFlashTransfer()
+        {
+            //TO-DO
+
+            //var returnData = new byte[] { 0xF1, 0xA9, 0x80, 0x02, 0x00, 0x00, 0xBE, 0x7A };
+
+            //returnData[5] = CRC(returnData.Take(5).ToArray());
+
+            byte[] sendData = { 2 };
+            await SerialPortManager.Instance.SendData(sendData);
+        }
+
+        /// <summary>
+        /// 开始传输实时图像数据。
+        /// </summary>
+        /// <returns></returns>
+        public async Task StartStreamTransfer()
+        {
+            //TO-DO
+
+            //var returnData = new byte[] { 0xF1, 0xA9, 0x80, 0x03, 0x00, 0x00, 0xBE, 0x7A };
+
+            //returnData[5] = CRC(returnData.Take(5).ToArray());
+
+            byte[] sendData = { 3 };
+            await SerialPortManager.Instance.SendData(sendData);
+        }
+
+        /// <summary>
+        /// 通过传入的Data数据进行校验，返回该组数据所属的数据的协议类型。
+        /// </summary>
+        /// <param name="data">传入数据</param>
+        /// <returns><see cref="CommandType"/></returns>
+        public CommandType AnalysisData(byte[] data)
+        {
+            if (data[data[4] + 6] != StopBit[0] || data[data[4] + 7] != StopBit[1])
+            {
+                return CommandType.WrongData;
+            }
+
+
+            if (data[data[4] + 5] != CRC(data.Take(data[4] + 5).ToArray()))
+            {
+                return CommandType.WrongData;
+            }
+
+            if (data[2] == 0x00)
+            {
+                switch (data[3])
+                {
+                    case 0x04: //下位机停止发送数据
+                        return CommandType.TransferDone;
+                    case 0x05: //下位机开始传输FLASH内容
+                        return CommandType.FlashData;
+                    case 0x06: //下位机开始传输实时预览内容
+                        return CommandType.StreamData;
+                    default:
+                        break;
+                }
+            }
+
+            return CommandType.WrongData;
+        }
+
         /// <summary>
         /// 使用<see cref="CRC(byte[], int, int)"/>计算传入Buffer的CRC校验值。
         /// </summary>
@@ -43,12 +155,12 @@ namespace PressureMeasurementApplication.Utils
         {
             byte crc = 0;
 
-            if(buffer is null)
+            if (buffer is null)
             {
                 throw new ArgumentNullException("buffer");
             }
 
-            if(offset <0 || Length <0 || offset+Length > buffer.Length)
+            if (offset < 0 || Length < 0 || offset + Length > buffer.Length)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -62,7 +174,7 @@ namespace PressureMeasurementApplication.Utils
         }
 
         /// <summary>
-        /// CRC8校验用数据表
+        /// CRC8校验用数据表,G(x)=x8+x5+x4+1
         /// </summary>
         private byte[] CRC8Table = new byte[]
         {
@@ -99,5 +211,44 @@ namespace PressureMeasurementApplication.Utils
             0x74, 0x2a, 0xc8, 0x96, 0x15, 0x4b, 0xa9, 0xf7,
             0xb6, 0xe8, 0x0a, 0x54, 0xd7, 0x89, 0x6b, 0x35
         };
+    }
+
+    public enum CommandType
+    {
+        /// <summary>
+        /// 错误数据
+        /// </summary>
+        WrongData = 0,
+
+        /// <summary>
+        /// 停止全部行为
+        /// </summary>
+        StopAction = 1,
+
+        /// <summary>
+        /// 开始读取Flash
+        /// </summary>
+        CanReadFlash = 2,
+
+        /// <summary>
+        /// 开始实施串流
+        /// </summary>
+        CanStartStream = 3,
+
+        /// <summary>
+        /// 传输全部完成
+        /// </summary>
+        TransferDone = 4,
+
+        /// <summary>
+        /// 表示该数据为FlashData
+        /// </summary>
+        FlashData = 5,
+
+        /// <summary>
+        /// 表示该数据为StreamData
+        /// </summary>
+        StreamData = 6
+
     }
 }

@@ -9,6 +9,11 @@ namespace PressureMeasurementApplication.Model
     [AddINotifyPropertyChangedInterface]
     public class ModelBase<T> where T : class
     {
+        /// <summary>
+        /// 唯一ID。
+        /// </summary>
+        public ulong Id { get; set; } 
+
         private static T InstanceCreator()
         {
             return Activator.CreateInstance(typeof(T), true) as T;
@@ -22,6 +27,6 @@ namespace PressureMeasurementApplication.Model
     [AddINotifyPropertyChangedInterface]
     public class ModelBase
     {
-
+        public ulong Id { get; set; }
     }
 }

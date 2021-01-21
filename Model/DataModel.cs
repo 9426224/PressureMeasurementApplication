@@ -10,15 +10,20 @@ namespace PressureMeasurementApplication.Model
 {
     public class DataModel : ModelBase<DataModel>
     {
-        //存储读取到的原始byte类型数据。
-        [AlsoNotifyFor(nameof(DataString))]
-        public byte[] Data { get; set; }
+        /// <summary>
+        /// 获取或设置一个值，表示该数据所属任务计划的Id。
+        /// </summary>
+        public ulong MissionModelId { get; set; }
 
-        //以字符串方式读写数据。
-        public string DataString
-        {
-            get => Data is null? "null" : string.Join("", Data.Select(x=>x.ToString("x2")));
-        }
+        /// <summary>
+        /// 获取或设置一个值，表示任务计划的单个数据。
+        /// </summary>
+        public byte Data { get; set; }
+
+        /// <summary>
+        /// 获取或设置一个值，表示该数据的采集来源的传感器ID。
+        /// </summary>
+        public int SensorId { get; set; }
 
     }
 }

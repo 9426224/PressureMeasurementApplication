@@ -16,9 +16,9 @@ namespace PressureMeasurementApplication.Utils
         private System.IO.Ports.SerialPort serialPort;
 
         /// <summary>
-        /// 缓存接收数据使用的Byte数组。
+        /// 缓存接收数据使用的Byte数组。长度为70000是考虑到长度域最多允许65535个字符单次输入。
         /// </summary>
-        private byte[] buffer = new byte[1000];
+        private byte[] buffer = new byte[70000];
 
         private SerialPortManager()
         {
@@ -86,6 +86,7 @@ namespace PressureMeasurementApplication.Utils
             if (serialPort.IsOpen)
             {
                 await serialPort.BaseStream.WriteAsync(message);
+                return;
             }
             throw new InvalidOperationException("串口未打开");
         }
@@ -113,7 +114,6 @@ namespace PressureMeasurementApplication.Utils
 
                 await serialPort.BaseStream.ReadAsync(buffer, 2, 3);
                 await serialPort.BaseStream.ReadAsync(buffer, 5, buffer[4] + 3);
-
 
                 return new Memory<byte>(buffer, 0, buffer[4] + 8);
 

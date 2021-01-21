@@ -13,9 +13,10 @@ namespace PressureMeasurementApplication.Utils
 {
     public class SQLiteDataContext : DbContext
     {
+        public DbSet<MissionModel> MissionModel { get; set; }
         public DbSet<DataModel> DataModel { get; set; }
 
-        public SQLiteDataContext(DbContextOptions options) :base(options)
+        public SQLiteDataContext(DbContextOptions<SQLiteDataContext> options) :base(options)
         {
             this.Database.Migrate();
         }
@@ -24,8 +25,29 @@ namespace PressureMeasurementApplication.Utils
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<DataModel>()
-                .HasKey(x => x.Data);
+            modelBuilder.Entity<MissionModel>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.HasMany(x => x.DataModels)
+                    .WithOne().OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<DataModel>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+            });
+
+        }
+    }
+
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<SQLiteDataContext>
+    {
+        public SQLiteDataContext CreateDbContext(string[] args)
+        {
+            var builder = new DbContextOptionsBuilder<SQLiteDataContext>()
+                .UseSqlite("datasource = default.sqlite");
+
+            return new SQLiteDataContext(builder.Options);
         }
     }
 
