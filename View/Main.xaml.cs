@@ -19,13 +19,11 @@ namespace PressureMeasurementApplication.View
     /// </summary>
     public partial class Main : Window
     {
-        private readonly SQLiteDataContext dataContext;
-
-        public Main(SQLiteDataContext dataContext)
+        public Main(MainViewModel mainViewModel)
         {
-            InitializeComponent();
-
-            this.dataContext = dataContext;
+            DataContext = mainViewModel;      
+         
+            InitializeComponent();      
         }
 
         private void PART_TITLEBAR_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

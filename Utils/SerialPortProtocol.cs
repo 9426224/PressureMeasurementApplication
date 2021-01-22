@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,10 +34,10 @@ namespace PressureMeasurementApplication.Utils
             await StartFlashTransfer();
             while (true)
             {
-                var returnList = (await SerialPortManager.Instance.ReadPort()).ToArray();
+                var memoryStream = await SerialPortManager.Instance.ReadPort();
 
-                var type = SerialPortProtocol.Instance.AnalysisData(returnList);
-                var data = returnList.Skip(5).Take(returnList[4]).ToArray();
+                var data = memoryStream.Slice(5, memoryStream.Span[4]);
+                //var f = MemoryMarshal.Cast<byte, short>(data.Span);
 
                 switch (type)
                 {

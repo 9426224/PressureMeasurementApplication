@@ -4,12 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PressureMeasurementApplication.View.Pages"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewmodel="clr-namespace:PressureMeasurementApplication.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="350">
-    <UserControl.DataContext>
-        <viewmodel:SerialPortViewModel />
-    </UserControl.DataContext>
+ 
 
     <Grid>
 
@@ -18,7 +17,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="串口通信设置" Style="{StaticResource GroupBoxStyleOverride}">
+        <GroupBox Grid.Row="0" Header="串口通信设置" Margin="0 5 0 5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -28,43 +27,82 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 5 0 5">
                     <Label Content="串口号" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="PortNameComboBox" Width="210" ItemsSource="{Binding PortNameList}" SelectedValue="{Binding PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value" />
-                    <Button Command="{Binding RefreshCommand}"  Margin="5 0 0 0" ToolTip="Refresh COM* ports" >
-                        <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" Fill="{StaticResource ForegroundBrush}" Stretch="Uniform" />
+
+                    <ComboBox x:Name="PortNameComboBox" 
+                              Width="210" 
+                              ItemsSource="{Binding PortNameList}" 
+                              SelectedValue="{Binding PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value">
+                    </ComboBox>
+                    <Label Width="10"></Label>
+                    <Button Command="{Binding RefreshCommand}"   
+                            ToolTip="Refresh COM* ports"  
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            materialDesign:ButtonProgressAssist.Value="-1"
+                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                            materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                            Margin="2,0" Width="45">
+                        <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" Fill="Black" Stretch="Uniform" />
                     </Button> 
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5 0 5">
                     <Label Content="波特率" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="BaudRateComboBox" Width="130" ItemsSource="{Binding BaudRatesList}"  SelectedValue="{Binding BaudRate, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox x:Name="BaudRateComboBox" 
+                              Width="130" 
+                              ItemsSource="{Binding BaudRatesList}"  
+                              SelectedValue="{Binding BaudRate, Mode=TwoWay}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value" />
                     <Label Content="数据位" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="DataBitsComboBox" Width="70" ItemsSource="{Binding DataBitsList}" SelectedValue="{Binding DataBits, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox x:Name="DataBitsComboBox" 
+                              Width="70" 
+                              ItemsSource="{Binding DataBitsList}" 
+                              SelectedValue="{Binding DataBits, Mode=TwoWay}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value" />
 
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 5 0 5">
                     <Label Content="校验位" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="ParityComboBox" Width="130" ItemsSource="{Binding ParitiesList}" SelectedValue="{Binding Parity, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox x:Name="ParityComboBox" 
+                              Width="130" 
+                              ItemsSource="{Binding ParitiesList}" 
+                              SelectedValue="{Binding Parity, Mode=TwoWay}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value" />
                     <Label Content="停止位" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="StopBitsComboBox" Width="70" ItemsSource="{Binding StopBitsList}" SelectedValue="{Binding StopBits, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox x:Name="StopBitsComboBox" 
+                              Width="70" 
+                              ItemsSource="{Binding StopBitsList}" 
+                              SelectedValue="{Binding StopBits, Mode=TwoWay}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value" />
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0 5 0 5">
                     <Label Content="握手" Width="50" Foreground="Black"/>
-                    <ComboBox x:Name="HandshakesComboBox" Width="170" ItemsSource="{Binding HandshakeList}" SelectedValue="{Binding Handshake, Mode=TwoWay}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox x:Name="HandshakesComboBox" 
+                              Width="170" 
+                              ItemsSource="{Binding HandshakeList}" 
+                              SelectedValue="{Binding Handshake, Mode=TwoWay}" 
+                              SelectedValuePath="Key" 
+                              DisplayMemberPath="Value" />
                 </StackPanel>
 
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1"  Header="开关" Style="{StaticResource GroupBoxStyleOverride}">
+        <GroupBox Grid.Row="1"  Header="开关" Margin="0 5 0 5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 5 0 5"> 
-                    <Button Content="开启通信" Command="{Binding OpenCommand}" Width="80" />
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 5 0 5">
+                    <Button Content="开启设备通信" Command="{Binding OpenCommand}" Width="100" Style="{StaticResource MaterialDesignRaisedLightButton}"/>
                     <Label Width="30" Foreground="Black"/>
-                    <Button Content="关闭通信" Command="{Binding CloseCommand}" Width="80"/>
+                    <Button Content="关闭设备通信" Command="{Binding CloseCommand}" Width="100" Style="{StaticResource MaterialDesignRaisedLightButton}"/>
                 </StackPanel>
 
             </Grid>

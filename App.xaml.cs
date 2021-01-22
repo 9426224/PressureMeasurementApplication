@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PressureMeasurementApplication.Utils;
 using PressureMeasurementApplication.View;
+using PressureMeasurementApplication.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -27,7 +28,12 @@ namespace PressureMeasurementApplication
             services.AddSingleton<Main>();
 
             services.AddDbContext<SQLiteDataContext>(options => options
-                .UseSqlite(Configuration.GetConnectionString("SqlConnection")));
+                .UseSqlite(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Transient);
+            
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<MissionViewModel>();
+            services.AddSingleton<SerialPortViewModel>();
+            
         }
 
         private void OnStartup(object sender, StartupEventArgs e)

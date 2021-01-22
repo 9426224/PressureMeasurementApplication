@@ -15,7 +15,8 @@ using System.Threading.Tasks;
 
 namespace PressureMeasurementApplication.ViewModel
 {
-    public class SerialPortViewModel : ViewModelBase 
+    [AddINotifyPropertyChangedInterface]
+    public class SerialPortViewModel 
     {
         public Dictionary<string, string> PortNameList { get; private set; }
         public Dictionary<int, string> BaudRatesList { get; }
@@ -46,7 +47,7 @@ namespace PressureMeasurementApplication.ViewModel
 
             OpenCommand = new AwaitableDelegateCommand(OpenAsync);
             CloseCommand = new AwaitableDelegateCommand(CloseAsync);
-            RefreshCommand = new AwaitableDelegateCommand(RefreshPortNameList, () => true);
+            RefreshCommand = new AwaitableDelegateCommand(RefreshPortNameList);
         }
 
         /// <summary>
