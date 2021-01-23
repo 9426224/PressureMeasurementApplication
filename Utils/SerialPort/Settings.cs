@@ -9,10 +9,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PressureMeasurementApplication.Utils;
 
-namespace PressureMeasurementApplication.Utils
+namespace PressureMeasurementApplication.Utils.SerialPort
 {
     [Serializable]
-    public class SerialPortsSettings : SingletonBase<SerialPortsSettings>
+    public class Settings : SingletonBase<Settings>
     {
         /// <summary>
         /// 返回一个Hashmap，存储使用<see cref="ManagementObjectSearcher"/>从<see cref="Win32_PnPEntity"/>中获取到的所有串口类型设备的合集。

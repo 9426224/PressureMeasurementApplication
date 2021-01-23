@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PressureMeasurementApplication.View.Pages
+namespace PressureMeasurementApplication.View.UserControls
 {
     /// <summary>
-    /// Interaction logic for SerialPortView.xaml
+    /// Interaction logic for MissionView.xaml
     /// </summary>
-    public partial class SerialPortView : UserControl
+    public partial class MissionView : UserControl
     {
-        public SerialPortView()
+        public MissionView()
         {
             InitializeComponent();
         }

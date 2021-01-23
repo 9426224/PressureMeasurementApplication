@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PressureMeasurementApplication.Utils
+namespace PressureMeasurementApplication.Utils.SerialPort
 {
-    public class SerialPortProtocol : SingletonBase<SerialPortProtocol>
+    public class Protocol : SingletonBase<Protocol>
     {
         /// <summary>
         /// 起始位
@@ -20,7 +20,7 @@ namespace PressureMeasurementApplication.Utils
         /// </summary>
         public byte[] StopBit { get; private set; } = { 0xBE, 0x7A };
 
-        private SerialPortProtocol()
+        private Protocol()
         {
 
         }
@@ -34,10 +34,10 @@ namespace PressureMeasurementApplication.Utils
             await StartFlashTransfer();
             while (true)
             {
-                var memoryStream = await SerialPortManager.Instance.ReadPort();
+                var memory = await Manager.Instance.ReadPort();
 
-                var data = memoryStream.Slice(5, memoryStream.Span[4]);
-                //var f = MemoryMarshal.Cast<byte, short>(data.Span);
+                var type = AnalysisData(memory,memory.Span[4]);
+                //var f = MemoryMarshal.Cast<byte, short>(memory.Slice(5, memory.Span[4]).Span);
 
                 switch (type)
                 {
@@ -66,7 +66,7 @@ namespace PressureMeasurementApplication.Utils
             //returnData[5] = CRC(returnData.Take(5).ToArray());
 
             byte[] sendData = { 1 };
-            await SerialPortManager.Instance.SendData(sendData);
+            await Manager.Instance.SendData(sendData);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace PressureMeasurementApplication.Utils
             //returnData[5] = CRC(returnData.Take(5).ToArray());
 
             byte[] sendData = { 2 };
-            await SerialPortManager.Instance.SendData(sendData);
+            await Manager.Instance.SendData(sendData);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace PressureMeasurementApplication.Utils
             //returnData[5] = CRC(returnData.Take(5).ToArray());
 
             byte[] sendData = { 3 };
-            await SerialPortManager.Instance.SendData(sendData);
+            await Manager.Instance.SendData(sendData);
         }
 
         /// <summary>
@@ -106,22 +106,22 @@ namespace PressureMeasurementApplication.Utils
         /// </summary>
         /// <param name="data">传入数据</param>
         /// <returns><see cref="CommandType"/></returns>
-        public CommandType AnalysisData(byte[] data)
+        public CommandType AnalysisData(Memory<byte> data,byte length)
         {
-            if (data[data[4] + 6] != StopBit[0] || data[data[4] + 7] != StopBit[1])
+            if (data.Span[length + 6] != StopBit[0] || data.Span[length + 7] != StopBit[1])
             {
                 return CommandType.WrongData;
             }
 
 
-            if (data[data[4] + 5] != CRC(data.Take(data[4] + 5).ToArray()))
+            if (data.Span[length + 5] != CRC(data.Slice(0, length + 5)))
             {
                 return CommandType.WrongData;
             }
 
-            if (data[2] == 0x00)
+            if (data.Span[2] == 0x00)
             {
-                switch (data[3])
+                switch (data.Span[3])
                 {
                     case 0x04: //下位机停止发送数据
                         return CommandType.TransferDone;
@@ -142,7 +142,7 @@ namespace PressureMeasurementApplication.Utils
         /// </summary>
         /// <param name="buffer">传入的Buffer</param>
         /// <returns></returns>
-        public byte CRC(byte[] buffer)
+        public byte CRC(Memory<byte> buffer)
             => CRC(buffer, 0, buffer.Length);
 
         /// <summary>
@@ -152,11 +152,11 @@ namespace PressureMeasurementApplication.Utils
         /// <param name="offset"></param>
         /// <param name="Length">Buffer长度</param>
         /// <returns></returns>
-        private byte CRC(byte[] buffer, int offset, int Length)
+        private byte CRC(Memory<byte> buffer, int offset, int Length)
         {
             byte crc = 0;
 
-            if (buffer is null)
+            if (buffer.IsEmpty)
             {
                 throw new ArgumentNullException("buffer");
             }
@@ -168,7 +168,7 @@ namespace PressureMeasurementApplication.Utils
 
             for (int i = offset; i < Length; i++)
             {
-                crc = CRC8Table[crc ^ buffer[i]];
+                crc = CRC8Table[crc ^ buffer.Span[i]];
             }
 
             return crc;

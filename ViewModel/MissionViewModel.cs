@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PressureMeasurementApplication.Model;
 using PressureMeasurementApplication.Utils;
+using PressureMeasurementApplication.Utils.SerialPort;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace PressureMeasurementApplication.ViewModel
             QueryCommand = new AwaitableDelegateCommand(QueryAsync);
             DeleteCommand = new AwaitableDelegateCommand(DeleteAsync);
             //DisplayCommand = new AwaitableDelegateCommand(DisplayAsync);
-            GetDataCommand = new AwaitableDelegateCommand(SerialPortProtocol.Instance.GetData);
+            GetDataCommand = new AwaitableDelegateCommand(Protocol.Instance.GetData);
 
             _ = QueryAsync();
         }
@@ -42,14 +43,9 @@ namespace PressureMeasurementApplication.ViewModel
         public ulong? SeletedId { get; set; }
 
         /// <summary>
-        /// 发送数据至串口，通知下位机开始传输FLASH信号
+        /// 查询数据库所有任务计划并刷新前端页面显示。
         /// </summary>
         /// <returns></returns>
-        public async Task GetDataFromPort()
-        {
-            await SerialPortProtocol.Instance.StartFlashTransfer();
-        }
-
         public async Task QueryAsync()
         {
             MissionModels = await dataContext.MissionModel.ToListAsync();
@@ -62,7 +58,7 @@ namespace PressureMeasurementApplication.ViewModel
         /// <returns></returns>
         public async Task AddAsync()
         {
-            await GetDataFromPort();
+            await Protocol.Instance.StartFlashTransfer();
 
             var lastMission = await dataContext.Set<MissionModel>().MaxAsync();
 
@@ -105,16 +101,23 @@ namespace PressureMeasurementApplication.ViewModel
         /// 根据选择的ID查询该选中计划与关联的整组数据合集。
         /// </summary>
         /// <returns></returns>
-        public async Task GetAsync()
+        public async Task<MissionModel> GetAsync()
         {
             var mission = await dataContext
                 .Set<MissionModel>()
                 .Include(x => x.DataModels)
                 .FirstOrDefaultAsync(x=>x.Id == SeletedId);
 
-            foreach(var data in mission.DataModels)
-            {
-            }
+            return mission;
+        }
+
+        /// <summary>
+        /// 根据选择的ID进行绘图展示。
+        /// </summary>
+        /// <returns></returns>
+        public async Task DisplayAsync()
+        {
+
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace PressureMeasurementApplication.Utils
+namespace PressureMeasurementApplication.Utils.SerialPort
 {
-    public class SerialPortManager : SingletonBase<SerialPortManager>
+    public class Manager : SingletonBase<Manager>
     {
         /// <summary>
         /// 实例化SerialPort。
@@ -20,7 +20,7 @@ namespace PressureMeasurementApplication.Utils
         /// </summary>
         private byte[] buffer = new byte[70000];
 
-        private SerialPortManager()
+        private Manager()
         {
             this.serialPort = new System.IO.Ports.SerialPort();
         }
@@ -31,7 +31,7 @@ namespace PressureMeasurementApplication.Utils
         public bool IsOpen { get { return serialPort.IsOpen; } }
 
         /// <summary>
-        /// 通过<see cref="SerialPort.Open">Open</see>方法开启串口连接，进行该操作前会使用<see cref="SerialPortManager.Close">Close</see>方法关闭所有串口通信。
+        /// 通过<see cref="SerialPort.Open">Open</see>方法开启串口连接，进行该操作前会使用<see cref="Manager.Close">Close</see>方法关闭所有串口通信。
         /// </summary>
         /// <param name="portName">串口名:<see cref="SerialPort.PortName"/></param>
         /// <param name="baudRate">波特率:<see cref="SerialPort.BaudRate"/></param>
@@ -92,7 +92,7 @@ namespace PressureMeasurementApplication.Utils
         }
 
         /// <summary>
-        /// 通过<see cref="SerialPort.BaseStream">BaseStream</see>中的<see cref="ReadAsync"/>方法读取串口数据并保存至<see cref="SerialPortManager.buffer">Buffer</see>中。
+        /// 通过<see cref="SerialPort.BaseStream">BaseStream</see>中的<see cref="ReadAsync"/>方法读取串口数据并保存至<see cref="Manager.buffer">Buffer</see>中。
         /// </summary>
         public async Task<Memory<Byte>> ReadPort()
         {
@@ -103,8 +103,8 @@ namespace PressureMeasurementApplication.Utils
                 {
                     await serialPort.BaseStream.ReadAsync(buffer, 1 , 1);
 
-                    if (buffer[0] == SerialPortProtocol.Instance.StartBit[0]
-                        && buffer[1] == SerialPortProtocol.Instance.StartBit[1])
+                    if (buffer[0] == Protocol.Instance.StartBit[0]
+                        && buffer[1] == Protocol.Instance.StartBit[1])
                     {
                         break;
                     }

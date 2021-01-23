@@ -27,6 +27,9 @@ namespace PressureMeasurementApplication.Model
     [AddINotifyPropertyChangedInterface]
     public class ModelBase
     {
+        /// <summary>
+        /// 唯一ID。
+        /// </summary>
         public ulong Id { get; set; }
     }
 }
