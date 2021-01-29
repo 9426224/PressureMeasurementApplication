@@ -26,38 +26,26 @@ namespace PressureMeasurementApplication.Utils.SerialPort
         }
 
         /// <summary>
-        /// 调用此函数以持续获取串口返回数据。
+        /// 开始传输实时图像数据。
         /// </summary>
         /// <returns></returns>
-        public async Task GetData()
+        public async Task StartStreamTransfer()
         {
-            await StartFlashTransfer();
-            while (true)
-            {
-                var memory = await Manager.Instance.ReadPort();
+            //TO-DO
 
-                var type = AnalysisData(memory,memory.Span[4]);
-                //var f = MemoryMarshal.Cast<byte, short>(memory.Slice(5, memory.Span[4]).Span);
+            //var returnData = new byte[] { 0xF1, 0xA9, 0x80, 0x03, 0x00, 0x00, 0xBE, 0x7A };
 
-                switch (type)
-                {
-                    case CommandType.TransferDone:
-                        break;
-                    case CommandType.FlashData:
-                        break;
-                    case CommandType.StreamData:
-                        break;
-                    default:
-                        continue;
-                }
-            }
+            //returnData[5] = CRC(returnData.Take(5).ToArray());
+
+            byte[] sendData = { 3 };
+            await Manager.Instance.SendAsync(sendData);
         }
 
         /// <summary>
-        /// 发送命令至串口通知停止传送数据。
+        /// 发送命令至串口通知停止传送实时预览数据。
         /// </summary>
         /// <returns></returns>
-        public async Task StopTransfer()
+        public async Task StopStreamTransfer()
         {
             //TO-DO
 
@@ -66,7 +54,7 @@ namespace PressureMeasurementApplication.Utils.SerialPort
             //returnData[5] = CRC(returnData.Take(5).ToArray());
 
             byte[] sendData = { 1 };
-            await Manager.Instance.SendData(sendData);
+            await Manager.Instance.SendAsync(sendData);
         }
 
         /// <summary>
@@ -82,23 +70,7 @@ namespace PressureMeasurementApplication.Utils.SerialPort
             //returnData[5] = CRC(returnData.Take(5).ToArray());
 
             byte[] sendData = { 2 };
-            await Manager.Instance.SendData(sendData);
-        }
-
-        /// <summary>
-        /// 开始传输实时图像数据。
-        /// </summary>
-        /// <returns></returns>
-        public async Task StartStreamTransfer()
-        {
-            //TO-DO
-
-            //var returnData = new byte[] { 0xF1, 0xA9, 0x80, 0x03, 0x00, 0x00, 0xBE, 0x7A };
-
-            //returnData[5] = CRC(returnData.Take(5).ToArray());
-
-            byte[] sendData = { 3 };
-            await Manager.Instance.SendData(sendData);
+            await Manager.Instance.SendAsync(sendData);
         }
 
         /// <summary>

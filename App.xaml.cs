@@ -33,7 +33,7 @@ namespace PressureMeasurementApplication
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<MissionViewModel>();
             services.AddSingleton<SerialPortViewModel>();
-            
+            services.AddSingleton<DisplayViewModel>();
         }
 
         private void OnStartup(object sender, StartupEventArgs e)

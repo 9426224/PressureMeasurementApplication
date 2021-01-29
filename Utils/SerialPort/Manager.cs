@@ -73,6 +73,10 @@ namespace PressureMeasurementApplication.Utils.SerialPort
         {
             await Task.Run(() =>
             {
+                if(serialPort.IsOpen)
+                {
+                    serialPort.BaseStream.DisposeAsync();
+                } 
                 serialPort.Close();
             });
         }
@@ -81,7 +85,7 @@ namespace PressureMeasurementApplication.Utils.SerialPort
         /// 通过<see cref="SerialPort.BaseStream">BaseStream</see>中的<see cref="WriteAsync"/>方法发送/写入数据至串口。
         /// </summary>
         /// <param name="message">外部返回的需要发送至串口的消息数组。</param>
-        public async Task SendData(Memory<byte> message)
+        public async Task SendAsync(Memory<byte> message)
         {
             if (serialPort.IsOpen)
             {

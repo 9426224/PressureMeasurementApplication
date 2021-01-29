@@ -4,8 +4,11 @@ using PressureMeasurementApplication.Utils;
 using PressureMeasurementApplication.Utils.SerialPort;
 using PropertyChanged;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,39 +19,47 @@ namespace PressureMeasurementApplication.ViewModel
     public class MissionViewModel
     {
         public SQLiteDataContext dataContext;
-        
-        public ICommand AddCommand { get; }
+
+        public ObservableCollection<MissionModel> missionModels = new ObservableCollection<MissionModel>();
+
+        public ICommand TakeDataCommand { get; }
         public ICommand QueryCommand { get; }
         public ICommand DeleteCommand { get; }
-        public ICommand GetDataCommand { get; }
+        public ICommand DisplayCommand { get; }
+        public ICommand StartStreamCommand { get; }
+        public ICommand StopStreamCommand { get; }
 
         public MissionViewModel(SQLiteDataContext dataContext)
         {
             this.dataContext = dataContext;
+            FlashQuene = new BlockingCollection<Memory<Byte>>();
+            StreamQuene = new BlockingCollection<Memory<Byte>>();
 
-            AddCommand = new AwaitableDelegateCommand(AddAsync);
-            QueryCommand = new AwaitableDelegateCommand(QueryAsync);
+            TakeDataCommand = new AwaitableDelegateCommand(TakeDataAsync);
             DeleteCommand = new AwaitableDelegateCommand(DeleteAsync);
-            //DisplayCommand = new AwaitableDelegateCommand(DisplayAsync);
-            GetDataCommand = new AwaitableDelegateCommand(Protocol.Instance.GetData);
+            DisplayCommand = new AwaitableDelegateCommand(DisplayAsync);
+            StartStreamCommand = new AwaitableDelegateCommand(StartStreamAsync);
+            StopStreamCommand = new AwaitableDelegateCommand(StopStreamAsync);
 
             _ = QueryAsync();
         }
-        
-        public List<MissionModel> MissionModels { get; private set; }
 
         /// <summary>
-        /// 在任务列表中选中的任务ID。
+        /// 在任务列表中选中的任务。
         /// </summary>
-        public ulong? SeletedId { get; set; }
+        public MissionModel SelectedMission { get; set; }
+
+        public BlockingCollection<Memory<Byte>> FlashQuene { get; set; }
+
+        public BlockingCollection<Memory<Byte>> StreamQuene { get; set; }
 
         /// <summary>
         /// 查询数据库所有任务计划并刷新前端页面显示。
         /// </summary>
         /// <returns></returns>
-        public async Task QueryAsync()
+        public ObservableCollection<MissionModel> MissionModels
         {
-            MissionModels = await dataContext.MissionModel.ToListAsync();
+            get { return missionModels; }
         }
 
         /// <summary>
@@ -56,7 +67,7 @@ namespace PressureMeasurementApplication.ViewModel
         /// </summary>
         /// <param name="missionModel"></param>
         /// <returns></returns>
-        public async Task AddAsync()
+        public async Task TakeDataAsync()
         {
             await Protocol.Instance.StartFlashTransfer();
 
@@ -70,31 +81,82 @@ namespace PressureMeasurementApplication.ViewModel
             };
 
             await dataContext.AddAsync(mission);
+
+            await QueryAsync();
         }
 
         /// <summary>
-        /// 根据选择的ID删除对应的任务计划。
+        /// 请求下位机传输实时预览数据进行绘图展示。
         /// </summary>
-        /// <param name="Id">待删除的任务计划ID。</param>
+        /// <returns></returns>
+        public async Task StartStreamAsync()
+        {
+            await Protocol.Instance.StartStreamTransfer();
+        }
+
+        /// <summary>
+        /// 停止实时预览数据传输。
+        /// </summary>
+        /// <returns></returns>
+        public async Task StopStreamAsync()
+        {
+            await Protocol.Instance.StopStreamTransfer();
+        }
+
+        public async Task DisplayAsync()
+        {
+            await GetAsync();
+
+        }
+
+        /// <summary>
+        /// 调用此函数以持续获取串口返回数据。
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetDataAsync()
+        {
+            while (true)
+            {
+                var memory = await Manager.Instance.ReadPort();
+
+                switch (Protocol.Instance.AnalysisData(memory, memory.Span[4]))
+                {
+                    case CommandType.TransferDone:
+                        FlashQuene.CompleteAdding();
+                        break;
+                    case CommandType.CanReadFlash:
+                        FlashQuene.Add(memory);
+                        break;
+                    case CommandType.CanStartStream:
+                        StreamQuene.Add(memory);
+                        break;
+                    default:
+                        break;
+                }
+                //MemoryMarshal.Cast<byte, short>(memory.Slice(5, memory.Span[4]).Span)
+            }      
+        }
+
+        /// <summary>
+        /// 根据选择的任务删除数据库中对应的任务计划。
+        /// </summary>
         /// <returns></returns>
         public async Task DeleteAsync()
         {
             using (var tx = await dataContext.Database.BeginTransactionAsync())
             {
-                var mission = await dataContext.Set<MissionModel>()
-                    .Include(x => x.DataModels)
-                    .FirstOrDefaultAsync(x => x.Id == SeletedId);
-
-                if(mission is null)
+                if (SelectedMission is null)
                 {
                     throw new InvalidOperationException("待删除的任务ID有误！");
                 }
 
-                dataContext.Remove(mission);
+                dataContext.Remove(SelectedMission);
 
                 await dataContext.SaveChangesAsync();
                 await tx.CommitAsync();
             }
+
+            await QueryAsync();
         }
 
         /// <summary>
@@ -106,18 +168,15 @@ namespace PressureMeasurementApplication.ViewModel
             var mission = await dataContext
                 .Set<MissionModel>()
                 .Include(x => x.DataModels)
-                .FirstOrDefaultAsync(x=>x.Id == SeletedId);
+                .FirstOrDefaultAsync(x => x.Id == SelectedMission.Id);
 
             return mission;
         }
 
-        /// <summary>
-        /// 根据选择的ID进行绘图展示。
-        /// </summary>
-        /// <returns></returns>
-        public async Task DisplayAsync()
+        public async Task QueryAsync()
         {
-
+            missionModels.Clear();
+            await dataContext.MissionModel.ForEachAsync(x => missionModels.Add(x));
         }
     }
 }

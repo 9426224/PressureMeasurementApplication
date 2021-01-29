@@ -12,18 +12,22 @@ namespace PressureMeasurementApplication.ViewModel
     {
         SQLiteDataContext dataContext;
 
-        public MainViewModel(SQLiteDataContext dataContext, MissionViewModel missionViewModel,SerialPortViewModel serialPortViewModel)
+        public MainViewModel(SQLiteDataContext dataContext, MissionViewModel missionViewModel,SerialPortViewModel serialPortViewModel,DisplayViewModel displayViewModel)
         {
             this.dataContext = dataContext;
 
             MissionViewModel = missionViewModel;
 
             SerialPortViewModel = serialPortViewModel;
+
+            DisplayViewModel = displayViewModel;
         }
 
         public MissionViewModel MissionViewModel { get; }
 
         public SerialPortViewModel SerialPortViewModel { get; }
+
+        public DisplayViewModel DisplayViewModel { get; }
 
     }
 }
